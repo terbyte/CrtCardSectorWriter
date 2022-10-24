@@ -120,7 +120,7 @@ class Ui_Form(object):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.TimeSetter)
-        self.TimeSetter()
+        self.DateAndTime_Now()
         self.timer.start(1000)
 
     def retranslateUi(self, Form):
@@ -139,19 +139,36 @@ class Ui_Form(object):
         self.pushButton_3.setText(_translate("Form", "Copy"))
         self.pushButton_4.setText(_translate("Form", "Copy"))
         self.checkBox.setText(_translate("Form", "ALL SECTORS"))
+        ################ BUTTONS ########################
+        
+        self.pushButton_3.clicked.connect(lambda checked: copy_Epoch(self))
         
         
     def TimeSetter(self):
-        cur_time = datetime.strftime(datetime.now(), "%Y-%m-%d %H:%M:%S")
-        self.label_5.setText(cur_time)
         TIME_FORMAT = (('%Y-%m-%d %H:%M:%S'))
+        cur_time = datetime.strftime(datetime.now(), TIME_FORMAT)
+        self.label_5.setText(cur_time)
+        
         epoch = int(time.mktime(time.strptime(cur_time, TIME_FORMAT)))
         timeinID = str(epoch)
         self.label_7.setText(timeinID)
+
+    def DateAndTime_Now(self):
+        TIME_FORMAT = (('%Y-%m-%d %H:%M:%S'))
+        timenow=datetime.now()
+        timenow=timenow.strftime(TIME_FORMAT)	
+        d1=datetime.strptime(timenow,TIME_FORMAT)
+        self.label_5.setText(timenow)
+        #returns date and time with this format 2022-10-18 10:03:48
+        epoch = int(time.mktime(time.strptime(timenow, TIME_FORMAT)))
+        timeinEpoch = str(epoch)
+        self.label_7.setText(timeinEpoch)
         
-        
+            
+       
 def copy_Epoch(self):
     content = self.label_7.text()
+    
 
 if __name__ == "__main__":
     import sys
