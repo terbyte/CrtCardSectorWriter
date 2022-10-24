@@ -4,7 +4,6 @@ import threading
 from PyQt5.QtCore import QTimer
 from datetime import datetime
 import time
-import pyperclip
 import pytz
 
 class Ui_Form(object):
