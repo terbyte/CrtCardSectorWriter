@@ -1,11 +1,12 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import threading
-from PyQt5.QtCore import QTimer
+from PyQt5.QtCore import QTimer,QDateTime
 from datetime import datetime
 import time
 import pytz
 
+TIME_FORMAT = ('%Y-%m-%d %H:%M:%S')
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -34,7 +35,7 @@ class Ui_Form(object):
         self.pushButton.setStyleSheet("background-color:#006d77;color:white; ")
         self.pushButton.setObjectName("pushButton")
         self.label_3 = QtWidgets.QLabel(self.widget_2)
-        self.label_3.setGeometry(QtCore.QRect(30, 40, 121, 41))
+        self.label_3.setGeometry(QtCore.QRect(30, 0, 161, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_3.setFont(font)
@@ -57,21 +58,20 @@ class Ui_Form(object):
         self.comboBox.setCurrentText("")
         self.comboBox.setObjectName("comboBox")
         self.label_5 = QtWidgets.QLabel(self.widget_2)
-        self.label_5.setGeometry(QtCore.QRect(190, 40, 151, 41))
+        self.label_5.setGeometry(QtCore.QRect(190, 0, 151, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_5.setFont(font)
         self.label_5.setStyleSheet("color:white")
         self.label_5.setObjectName("label_5")
         self.label_6 = QtWidgets.QLabel(self.widget_2)
-        self.label_6.setGeometry(QtCore.QRect(30, 0, 161, 41))
-        font = QtGui.QFont()
+        self.label_6.setGeometry(QtCore.QRect(30, 40, 161, 41))
         font.setPointSize(12)
         self.label_6.setFont(font)
         self.label_6.setStyleSheet("color:white")
         self.label_6.setObjectName("label_6")
         self.label_7 = QtWidgets.QLabel(self.widget_2)
-        self.label_7.setGeometry(QtCore.QRect(190, 0, 151, 41))
+        self.label_7.setGeometry(QtCore.QRect(190, 40, 151, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_7.setFont(font)
@@ -114,15 +114,19 @@ class Ui_Form(object):
         self.checkBox.setGeometry(QtCore.QRect(460, 80, 121, 23))
         self.checkBox.setStyleSheet("color:white;")
         self.checkBox.setObjectName("checkBox")
-
+        self.dateTimeEdit.setDisplayFormat("yyyy/MM/dd hh:mm:ss")
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
-
+        
         self.timer = QTimer()
         self.timer.timeout.connect(self.TimeSetter)
-        self.DateAndTime_Now()
+        self.parse_date_time()
         self.timer.start(1000)
-
+        
+        currentTime = QDateTime.currentDateTime()
+        # dt_string = currentTime.toString(self.dateTimeEdit.displayFormat(self,TIME_FORMAT))
+        self.dateTimeEdit.setDateTime(currentTime)
+        
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "CARDSECTOR WRITER"))
@@ -142,33 +146,43 @@ class Ui_Form(object):
         ################ BUTTONS ########################
         
         self.pushButton_3.clicked.connect(lambda checked: copy_Epoch(self))
+        self.pushButton_4.clicked.connect(lambda checked: GetDatetime(self))
         
         
     def TimeSetter(self):
-        TIME_FORMAT = (('%Y-%m-%d %H:%M:%S'))
+        
         cur_time = datetime.strftime(datetime.now(), TIME_FORMAT)
         self.label_5.setText(cur_time)
-        
+
         epoch = int(time.mktime(time.strptime(cur_time, TIME_FORMAT)))
         timeinID = str(epoch)
         self.label_7.setText(timeinID)
 
-    def DateAndTime_Now(self):
-        TIME_FORMAT = (('%Y-%m-%d %H:%M:%S'))
+        
+    def parse_date_time(self):
         timenow=datetime.now()
-        timenow=timenow.strftime(TIME_FORMAT)	
-        d1=datetime.strptime(timenow,TIME_FORMAT)
-        self.label_5.setText(timenow)
-        #returns date and time with this format 2022-10-18 10:03:48
-        epoch = int(time.mktime(time.strptime(timenow, TIME_FORMAT)))
+        # timenow=timenow.strftime(TIME_FORMAT)	
+        localize = pytz.utc.localize(timenow)
+        parsed_datetime= localize.strftime(TIME_FORMAT)
+        self.label_5.setText(parsed_datetime)
+        self.epoch_it(parsed_datetime)
+        
+    def epoch_it(self,parsed_datetime):
+        epoch = int(time.mktime(time.strptime(parsed_datetime, TIME_FORMAT)))
         timeinEpoch = str(epoch)
         self.label_7.setText(timeinEpoch)
+
         
-            
        
 def copy_Epoch(self):
     content = self.label_7.text()
-    
+    value_datetime = self.dateTimeEdit.currentDateTime()
+
+def GetDatetime(self):
+    dt = self.dateTimeEdit.dateTime()
+    dt_string = dt.toString(self.dateTimeEdit.displayFormat())
+    print(dt_string)
+    self.epoch_it(dt_string)
 
 if __name__ == "__main__":
     import sys
