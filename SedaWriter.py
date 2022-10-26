@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import QDesktopWidget
 from PyQt5.QtCore import QTimer,QDateTime
 from datetime import datetime
 import time
+import re
 import pytz
 import pyperclip
 
@@ -81,7 +82,7 @@ class Ui_Form(object):
         self.label_7.setStyleSheet("color:white")
         self.label_7.setObjectName("label_7")
         self.label_8 = QtWidgets.QLabel(self.widget_2)
-        self.label_8.setGeometry(QtCore.QRect(30, 150, 121, 41))
+        self.label_8.setGeometry(QtCore.QRect(30, 150, 200, 41))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.label_8.setFont(font)
@@ -147,13 +148,15 @@ class Ui_Form(object):
         self.label_5.setText(_translate("Form", "Current Time:"))
         self.label_6.setText(_translate("Form", "Current Epoch Time:"))
         self.label_7.setText(_translate("Form", "Current Epoch Time:"))
-        self.label_8.setText(_translate("Form", "Data:"))
+        self.label_8.setText(_translate("Form", "Write Data of 0-3 Blocks:"))
         self.label_9.setText(_translate("Form", "Pick Date & Time:"))
         self.pushButton_3.setText(_translate("Form", "Copy"))
         self.pushButton_4.setText(_translate("Form", "Copy"))
         self.checkBox.setText(_translate("Form", "ALL SECTORS"))
         for i in range (3,17):
             self.comboBox.addItem(f"SECTOR {i}")
+            
+            
         ################ BUTTONS ########################
         self.pushButton.clicked.connect(lambda checked: Write_It(self))
         self.pushButton_3.clicked.connect(lambda checked: copy_Epoch(self))
@@ -200,8 +203,13 @@ def GetDatetime(self):
 
 
 def do_something(self):
-    print("something")
-    #read the sector depending on the selected sector // label_2 is the card code label
+    #getting combobox value
+    reComSectNum = re.compile("(\d\d|\d)")
+    SectNum = str(self.comboBox.currentText()) 
+    whatfound = reComSectNum.search(SectNum)
+    print(whatfound.group())
+    
+
 
 
 
