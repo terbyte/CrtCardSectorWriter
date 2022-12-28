@@ -1,16 +1,13 @@
 
-from sqlite3 import DatabaseError
 from PyQt5 import QtCore, QtGui, QtWidgets
-import threading
 from PyQt5.QtWidgets import QDesktopWidget
 from PyQt5.QtCore import QTimer,QDateTime
-from datetime import datetime
-import time
-import re
-import pytz
-import pyperclip
+from _utils import utilities 
+from _utils import functionalities 
 
-TIME_FORMAT = ('%Y-%m-%d %H:%M:%S')
+
+timeutil = utilities()
+funcutil = functionalities()
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -123,8 +120,8 @@ class Ui_Form(object):
         QtCore.QMetaObject.connectSlotsByName(Form)
         
         self.timer = QTimer()
-        self.timer.timeout.connect(self.TimeSetter)
-        self.parse_date_time()
+        self.timer.timeout.connect(timeutil.TimeSetter)
+        timeutil.parse_date_time()
         self.timer.start(1000)
         
         currentTime = QDateTime.currentDateTime()
@@ -137,6 +134,8 @@ class Ui_Form(object):
         qr = Form.frameGeometry()
         qr.moveCenter(cp)
         Form.move(qr.topLeft())
+        
+        
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "CARDSECTOR WRITER"))
@@ -158,64 +157,16 @@ class Ui_Form(object):
             
             
         ################ BUTTONS ########################
-        self.pushButton.clicked.connect(lambda checked: Write_It(self))
-        self.pushButton_3.clicked.connect(lambda checked: copy_Epoch(self))
-        self.pushButton_4.clicked.connect(lambda checked: GetDatetime(self))
+        self.pushButton.clicked.connect(lambda checked: funcutil.Write_It(self))
+        self.pushButton_3.clicked.connect(lambda checked: timeutil.copy_Epoch(self))
+        self.pushButton_4.clicked.connect(lambda checked: timeutil.GetDatetime(self))
         ################ COMBO BOX ######################
-        self.comboBox.activated.connect(lambda checked: do_something(self))
+        self.comboBox.activated.connect(lambda checked: funcutil.do_something(self))
         
-    def TimeSetter(self):
-        
-        cur_time = datetime.strftime(datetime.now(), TIME_FORMAT)
-        self.label_5.setText(cur_time)
-
-        epoch = int(time.mktime(time.strptime(cur_time, TIME_FORMAT)))
-        timeinID = str(epoch)
-        self.label_7.setText(timeinID)
-
-    def parse_date_time(self):
-        timenow=datetime.now()
-        # timenow=timenow.strftime(TIME_FORMAT)	
-        localize = pytz.utc.localize(timenow)
-        parsed_datetime= localize.strftime(TIME_FORMAT)
-        self.label_5.setText(parsed_datetime)
-        self.epoch_it(parsed_datetime)
-        return parsed_datetime
-    
-    def epoch_it(self,parsed_datetime):
-        epoch = int(time.mktime(time.strptime(parsed_datetime, TIME_FORMAT)))
-        timeinEpoch = str(epoch)
-        self.label_7.setText(timeinEpoch)
-        return timeinEpoch
 
        
-def copy_Epoch(self):
-    content = self.label_7.text()
-    to_copy = self.epoch_it(self.parse_date_time())
-    pyperclip.copy(to_copy)
 
-
-def GetDatetime(self):
-    dt = self.dateTimeEdit.dateTime()
-    dt_string = dt.toString(self.dateTimeEdit.displayFormat())
-    to_copy = self.epoch_it(dt_string)
-    pyperclip.copy(to_copy)
-
-
-def do_something(self):
-    #getting combobox value
-    reComSectNum = re.compile("(\d\d|\d)")
-    SectNum = str(self.comboBox.currentText()) 
-    whatfound = reComSectNum.search(SectNum)
-    print(whatfound.group())
     
-
-
-
-
-def Write_It(self):
-    DaTa = self.lineEdit.text().strip()
-    print("write!", DaTa)
     
 
 
